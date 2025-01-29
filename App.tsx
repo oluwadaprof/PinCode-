@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { MotiView } from "moti";
+import randomColor from "randomcolor";
 
 const { width } = Dimensions.get("window");
 
@@ -22,6 +23,16 @@ const dialPad = [1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "del"];
 const dialPadSize = width * 0.2;
 const dialPadTextSize = dialPadSize * 0.4;
 const _spacing = 20;
+
+const baseColor = randomColor();
+
+const _colors = {
+  primary: baseColor,
+  secondary: randomColor({
+    hue: baseColor,
+    luminosity: "dark",
+  }),
+};
 
 type Props = {
   onPress: (item: (typeof dialPad)[number]) => void;
@@ -51,20 +62,27 @@ function DialPad({ onPress }: Props) {
                 height: dialPadSize,
                 borderRadius: dialPadSize,
                 borderWidth: typeof item !== "number" ? 0 : 1,
-                borderColor: "black",
+                borderColor: _colors.secondary,
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
               {item === "del" ? (
-                <Text>del</Text>
+                <Text style={{ color: _colors.secondary }}>del</Text>
               ) : (
                 // <Ionicons
                 //   name="backspace-outline"
                 //   color={"black"}
                 //   size={dialPadTextSize}
                 // />
-                <Text style={{ fontSize: dialPadTextSize }}>{item}</Text>
+                <Text
+                  style={{
+                    fontSize: dialPadTextSize,
+                    color: _colors.secondary,
+                  }}
+                >
+                  {item}
+                </Text>
               )}
             </View>
           </TouchableOpacity>
@@ -84,7 +102,6 @@ export default function App() {
           flexDirection: "row",
           gap: _pinSpacing * 2,
           marginBottom: _spacing * 2,
-          // backgroundColor: "green",
           height: pinSize * 2,
           alignItems: "flex-end",
         }}
@@ -97,7 +114,7 @@ export default function App() {
               style={{
                 width: pinSize,
                 borderRadius: pinSize,
-                backgroundColor: "red",
+                backgroundColor: _colors.secondary,
               }}
               transition={{
                 type: "timing",
@@ -105,7 +122,8 @@ export default function App() {
               }}
               animate={{
                 height: isSelected ? pinSize : 2,
-                marginBottom: isSelected ? pinSize / 2 : 0
+                marginBottom: isSelected ? pinSize / 2 : 0, 
+                backgroundColor: isSelected ? _colors.secondary : `${_colors.secondary}66`
               }}
             ></MotiView>
           );
@@ -116,7 +134,7 @@ export default function App() {
           if (item === "del") {
             setCode((prevCode) => prevCode.slice(0, prevCode.length - 1));
           } else if (typeof item === "number") {
-            if(code.length === pinLength) return
+            if (code.length === pinLength) return;
             setCode((prevCode) => [...prevCode, item]);
           }
         }}
@@ -129,7 +147,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: _colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
